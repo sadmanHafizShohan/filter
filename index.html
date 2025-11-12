@@ -6,7 +6,7 @@
     <title>টেক্সট গ্রুপ ও স্মার্ট কপি</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #007bff;
@@ -50,6 +50,12 @@
             color: var(--primary-color);
             margin-bottom: 25px;
             font-weight: 700;
+            cursor: help;
+            transition: transform 0.3s ease;
+        }
+
+        h1:hover {
+            transform: scale(1.05);
         }
 
         .info {
@@ -88,7 +94,7 @@
 
         .button-group {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns */
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-bottom: 25px;
         }
@@ -118,12 +124,12 @@
             background-color: var(--secondary-hover-color);
         }
 
-        button.copy-all-btn { /* New style for copy all button */
+        button.copy-all-btn {
             background-color: var(--success-color);
         }
 
         button.copy-all-btn:hover {
-            background-color: #218838; /* Darker green */
+            background-color: #218838;
         }
 
         #resultsContainer h2 {
@@ -167,7 +173,7 @@
             font-weight: 500;
         }
 
-        .result-table td:last-child, .result-table th:last-child { /* Style for the new copy column */
+        .result-table td:last-child, .result-table th:last-child {
             text-align: center;
             width: 60px;
         }
@@ -179,14 +185,13 @@
             cursor: pointer;
             font-size: 1.2em;
             padding: 0;
-            transition: color 0.2s;
-            transform: none; /* Override button hover transform */
+            transition: color 0.2s, transform 0.2s;
         }
 
         .copy-row-btn:hover {
             color: var(--primary-hover-color);
             background: none;
-            transform: none;
+            transform: scale(1.2);
         }
         
         .empty-state {
@@ -229,8 +234,34 @@
         }
 
         .result-table tr.copied td {
-            background-color: #d4edda; /* A light green color */
-            transition: background-color 0.3s;
+            background-color: #d4edda;
+        }
+
+        /* Easter egg styles */
+        .secret-mode {
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -238,16 +269,16 @@
 
     <main class="container">
         <header>
-            <h1>টেক্সট গ্রুপ ও স্মার্ট কপি</h1>
+            <h1 title="ট্রিপল ক্লিক করুন! 🎉">টেক্সট গ্রুপ ও স্মার্ট কপি</h1>
             <section class="info">
-                <p>প্রথমে আপনার ট্যাব-সেপারেটেড টেক্সট নিচের বক্সে পেস্ট করুন। এরপর <strong>"গ্রুপ করুন"</strong> বাটনে ক্লিক করুন। টেবিল তৈরি হওয়ার পর, ইচ্ছামতো সারি সিলেক্ট করে কপি (`Ctrl+C`) করলে শুধুমাত্র হোল্ডিং ও খতিয়ান নম্বর কপি হবে।</p>
-                <p>নতুন ফিচার: <strong>"সব কপি করুন"</strong> বাটনে ক্লিক করে টেবিলের সব হোল্ডিং ও খতিয়ান নম্বর একবারে কপি করতে পারবেন। প্রতিটি সারির পাশে থাকা কপি আইকনে ক্লিক করে শুধু সেই সারির ডেটা কপি করা যাবে।</p>
+                <p>প্রথমে আপনার ট্যাব-সেপারেটেড টেক্সট নিচের বক্সে পেস্ট করুন। এরপর <strong>"গ্রুপ করুন"</strong> বাটনে ক্লিক করুন। টেবিল তৈরি হওয়ার পর, ইচ্ছামতো সারি সিলেক্ট করে কপি (`Ctrl+C`) করলে শুধুমাত্র হোল্ডিং ও খতিয়ান নম্বর কপি হবে।</p>
+                <p>নতুন ফিচার: <strong>"সব কপি করুন"</strong> বাটনে ক্লিক করে টেবিলের সব হোল্ডিং ও খতিয়ান নম্বর একবারে কপি করতে পারবেন। প্রতিটি সারির পাশে থাকা কপি আইকনে ক্লিক করে শুধু সেই সারির ডেটা কপি করা যাবে।</p>
             </section>
         </header>
 
         <section>
             <label for="inputText"><strong>আপনার টেক্সট এখানে পেস্ট করুন:</strong></label>
-            <textarea id="inputText" placeholder="হোল্ডিং নং	খতিয়ান নং	মন্তব্য..."></textarea>
+            <textarea id="inputText" placeholder="হোল্ডিং নং	খতিয়ান নং	মন্তব্য..."></textarea>
             
             <div class="button-group">
                 <button id="rearrangeBtn">গ্রুপ করুন</button>
@@ -272,25 +303,92 @@
         document.addEventListener('DOMContentLoaded', () => {
             const rearrangeBtn = document.getElementById('rearrangeBtn');
             const clearBtn = document.getElementById('clearBtn');
-            const copyAllBtn = document.getElementById('copyAllBtn'); // New button
+            const copyAllBtn = document.getElementById('copyAllBtn');
             const inputText = document.getElementById('inputText');
             const resultsTableContainer = document.getElementById('resultsTableContainer');
             const notification = document.getElementById('copyNotification');
+            const h1 = document.querySelector('h1');
 
-            // Load saved text from localStorage
-            const savedText = localStorage.getItem('inputTextContent');
+            let clickCount = 0;
+            let konamiCode = [];
+            const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+            // Easter Egg 1: Triple-click header
+            h1.addEventListener('click', () => {
+                clickCount++;
+                if (clickCount === 3) {
+                    document.body.classList.toggle('secret-mode');
+                    showNotification('🌈 রংধনু মোড সক্রিয়! 🌈', 'success');
+                    createConfetti();
+                    clickCount = 0;
+                }
+                setTimeout(() => clickCount = 0, 1000);
+            });
+
+            // Easter Egg 2: Konami Code
+            document.addEventListener('keydown', (e) => {
+                konamiCode.push(e.key);
+                if (konamiCode.length > 10) konamiCode.shift();
+                
+                if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                    showNotification('🎮 কোনামি কোড আনলক! আপনি একজন কিংবদন্তি! 🎮', 'success');
+                    createMassiveConfetti();
+                    konamiCode = [];
+                }
+            });
+
+            // Easter Egg 3: Type "debug" in textarea
+            let typedText = '';
+            inputText.addEventListener('keyup', () => {
+                typedText = inputText.value.toLowerCase();
+                if (typedText.includes('debug')) {
+                    console.log('🐛 Debug mode activated! Here are some stats:');
+                    console.log('Lines:', inputText.value.split('\n').length);
+                    console.log('Characters:', inputText.value.length);
+                    console.log('Developer appreciation level: 💯');
+                }
+            });
+
+            function createConfetti() {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                        document.body.appendChild(confetti);
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 30);
+                }
+            }
+
+            function createMassiveConfetti() {
+                for (let i = 0; i < 200; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                        document.body.appendChild(confetti);
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 10);
+                }
+            }
+
+            // Original functionality with fixes
+            const savedText = sessionStorage.getItem('inputTextContent');
             if (savedText) {
                 inputText.value = savedText;
             }
 
-            // Save text to localStorage on input
             inputText.addEventListener('input', () => {
-                localStorage.setItem('inputTextContent', inputText.value);
+                sessionStorage.setItem('inputTextContent', inputText.value);
             });
 
             const showNotification = (message, type = 'success') => {
                 notification.textContent = message;
-                notification.className = `show ${type}`; // Added 'show' class
+                notification.className = `show ${type}`;
                 setTimeout(() => {
                     notification.classList.remove('show');
                 }, 2500);
@@ -301,7 +399,7 @@
                 
                 tableHTML += '<thead><tr><th>নং</th>';
                 header.split('\t').forEach(part => tableHTML += `<th scope="col">${part}</th>`);
-                tableHTML += '<th scope="col">কপি</th>'; // New header for copy button
+                tableHTML += '<th scope="col">কপি</th>';
                 tableHTML += '</tr></thead>';
 
                 tableHTML += '<tbody>';
@@ -309,8 +407,7 @@
                     const cells = line.split('\t');
                     tableHTML += `<tr><td>${index + 1}</td>`;
                     cells.forEach(cell => tableHTML += `<td>${cell}</td>`);
-                    // Add copy button for each row
-                    tableHTML += `<td><button class="copy-row-btn" data-holding="${cells[0]}" data-khatian="${cells[1]}" title="এই সারি কপি করুন"> 📋</button></td>`;
+                    tableHTML += `<td><button class="copy-row-btn" data-holding="${cells[0]}" data-khatian="${cells[1]}" title="এই সারি কপি করুন">📋</button></td>`;
                     tableHTML += '</tr>';
                 });
                 tableHTML += '</tbody></table>';
@@ -329,7 +426,7 @@
                 const lines = text.split('\n').filter(line => line.trim() !== '');
 
                 if (lines.length < 2) {
-                    resultsTableContainer.innerHTML = '<div class="empty-state">হেডার সহ অন্তত একটি ডেটা লাইন প্রয়োজন।</div>';
+                    resultsTableContainer.innerHTML = '<div class="empty-state">হেডার সহ অন্তত একটি ডেটা লাইন প্রয়োজন।</div>';
                     return;
                 }
 
@@ -354,15 +451,13 @@
                 const table = resultsTableContainer.querySelector('.result-table');
                 if (table) {
                     table.addEventListener('copy', handleSmartCopy);
-                    // Add event listeners for per-row copy buttons
                     table.querySelectorAll('.copy-row-btn').forEach(button => {
                         button.addEventListener('click', (event) => {
                             const holding = event.target.dataset.holding;
                             const khatian = event.target.dataset.khatian;
                             copyToClipboard(`${holding}\t${khatian}`);
-                            showNotification('✅ হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+                            showNotification('✅ হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
 
-                            // Highlight the row
                             const row = event.target.closest('tr');
                             if (row) {
                                 row.classList.add('copied');
@@ -374,7 +469,7 @@
             
             const copyToClipboard = (text) => {
                 navigator.clipboard.writeText(text).then(() => {
-                    // Success handled by the calling function
+                    // Success handled by calling function
                 }).catch(err => {
                     console.error('Failed to copy: ', err);
                     showNotification('কপি করতে ব্যর্থ!', 'error');
@@ -399,19 +494,17 @@
                 if (rows.length > 0) {
                     const selectedData = [];
                     rows.forEach(row => {
-                        const cells = row.querySelectorAll('td'); // Only consider td for data
-                        // Ensure it's a data row with enough cells (SN, Holding, Khatian, Comment, CopyBtn)
-                        if (cells.length >= 4) { // Changed from 3 to 4 because of new copy button column
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 3) {
                              selectedData.push(`${cells[1].textContent}\t${cells[2].textContent}`);
                         }
                     });
                     copyText = selectedData.join('\n');
                 } else {
-                    // Handle single-line or partial selection within a row
                     const parentRow = range.startContainer.parentElement.closest('tr');
                     if (parentRow) {
                         const cells = parentRow.querySelectorAll('td');
-                        if (cells.length >= 4) { // Changed from 3 to 4
+                        if (cells.length >= 3) {
                             copyText = `${cells[1].textContent}\t${cells[2].textContent}`;
                         }
                     }
@@ -419,36 +512,16 @@
             
                 if (copyText) {
                     copyToClipboard(copyText.trim());
-                    showNotification('✅ শুধুমাত্র হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+                    showNotification('✅ শুধুমাত্র হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
 
-                    // Highlight copied rows
-                    const tableRows = tempDiv.querySelectorAll('tr');
-                    if (tableRows.length > 0) {
-                        const selectedRowIndexes = Array.from(tableRows).map(row => {
-                            // This is a bit fragile, depends on the structure.
-                            // A better way would be to have row IDs/data-attributes if possible
-                            // For now, let's find the original rows to highlight
-                            const firstCellContent = row.querySelector('td')?.textContent;
-                            if (!firstCellContent) return -1;
-                            
-                            const allTableRows = resultsTableContainer.querySelectorAll('.result-table tbody tr');
-                            for(let i=0; i<allTableRows.length; i++) {
-                                if(allTableRows[i].textContent.includes(firstCellContent)) {
-                                    return i;
-                                }
-                            }
-                            return -1;
-                        }).filter(index => index !== -1);
-
-                        const originalTableRows = resultsTableContainer.querySelectorAll('.result-table tbody tr');
-                        selectedRowIndexes.forEach(rowIndex => {
-                             if(originalTableRows[rowIndex]) {
-                                originalTableRows[rowIndex].classList.add('copied');
-                             }
-                        });
-                    }
+                    const tableRows = resultsTableContainer.querySelectorAll('.result-table tbody tr');
+                    tableRows.forEach(row => {
+                        if (selection.containsNode(row, true)) {
+                            row.classList.add('copied');
+                        }
+                    });
                 } else {
-                     showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
+                     showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
                 }
             };
 
@@ -468,34 +541,34 @@
                 let allCopyText = [];
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td');
-                    if (cells.length >= 4) { // SN, Holding, Khatian, Comment, CopyBtn
+                    if (cells.length >= 3) {
                         allCopyText.push(`${cells[1].textContent}\t${cells[2].textContent}`);
                     }
                 });
 
                 if (allCopyText.length > 0) {
                     copyToClipboard(allCopyText.join('\n'));
-                    showNotification('✅ সব হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+                    showNotification('✅ সব হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
 
-                    // Highlight all rows
-                    rows.forEach(row => row.classList.add('copied'));
+                    rows.forEach(row => {
+                        row.classList.add('copied');
+                    });
                 } else {
-                    showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
+                    showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
                 }
             };
 
             const clearAll = () => {
                 inputText.value = '';
-                localStorage.removeItem('inputTextContent'); // Clear saved data
+                sessionStorage.removeItem('inputTextContent');
                 resultsTableContainer.innerHTML = '<div class="empty-state">ফলাফল এখানে দেখানো হবে।</div>';
-                showNotification('সবকিছু মুছে ফেলা হয়েছে।', 'success');
+                showNotification('সবকিছু মুছে ফেলা হয়েছে।', 'success');
             };
 
             rearrangeBtn.addEventListener('click', rearrangeText);
-            copyAllBtn.addEventListener('click', copyAllHoldingKhatian); // New event listener
+            copyAllBtn.addEventListener('click', copyAllHoldingKhatian);
             clearBtn.addEventListener('click', clearAll);
 
-            // If there's saved text, process it on load
             if (savedText && savedText.trim()) {
                 rearrangeText();
             }
