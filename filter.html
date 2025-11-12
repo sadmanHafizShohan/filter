@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টেক্সট গ্রুপ ও স্মার্ট কপি</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --secondary-color: #6c757d;
+            --secondary-hover-color: #5a6268;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --white-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            margin: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--white-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .info {
+            background-color: #e7f3fe;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 250px;
+            font-family: monospace;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns */
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 12px 15px;
+            color: white;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+        
+        button.clear-btn {
+            background-color: var(--secondary-color);
+        }
+
+        button.clear-btn:hover {
+            background-color: var(--secondary-hover-color);
+        }
+
+        button.copy-all-btn { /* New style for copy all button */
+            background-color: var(--success-color);
+        }
+
+        button.copy-all-btn:hover {
+            background-color: #218838; /* Darker green */
+        }
+
+        #resultsContainer h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #resultsTableContainer {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .result-table th, .result-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .result-table th {
+            background-color: var(--light-bg);
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+        
+        .result-table tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        .result-table td:first-child, .result-table th:first-child {
+            text-align: center;
+            width: 50px;
+            font-weight: 500;
+        }
+
+        .result-table td:last-child, .result-table th:last-child { /* Style for the new copy column */
+            text-align: center;
+            width: 60px;
+        }
+
+        .copy-row-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+            transition: color 0.2s;
+            transform: none; /* Override button hover transform */
+        }
+
+        .copy-row-btn:hover {
+            color: var(--primary-hover-color);
+            background: none;
+            transform: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+        }
+
+        #copyNotification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            z-index: 1000;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        #copyNotification.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        #copyNotification.success {
+            background-color: var(--success-color);
+        }
+
+        #copyNotification.error {
+            background-color: var(--danger-color);
+        }
+
+        .result-table tr.copied td {
+            background-color: #d4edda; /* A light green color */
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <header>
+            <h1>টেক্সট গ্রুপ ও স্মার্ট কপি</h1>
+            <section class="info">
+                <p>প্রথমে আপনার ট্যাব-সেপারেটেড টেক্সট নিচের বক্সে পেস্ট করুন। এরপর <strong>"গ্রুপ করুন"</strong> বাটনে ক্লিক করুন। টেবিল তৈরি হওয়ার পর, ইচ্ছামতো সারি সিলেক্ট করে কপি (`Ctrl+C`) করলে শুধুমাত্র হোল্ডিং ও খতিয়ান নম্বর কপি হবে।</p>
+                <p>নতুন ফিচার: <strong>"সব কপি করুন"</strong> বাটনে ক্লিক করে টেবিলের সব হোল্ডিং ও খতিয়ান নম্বর একবারে কপি করতে পারবেন। প্রতিটি সারির পাশে থাকা কপি আইকনে ক্লিক করে শুধু সেই সারির ডেটা কপি করা যাবে।</p>
+            </section>
+        </header>
+
+        <section>
+            <label for="inputText"><strong>আপনার টেক্সট এখানে পেস্ট করুন:</strong></label>
+            <textarea id="inputText" placeholder="হোল্ডিং নং	খতিয়ান নং	মন্তব্য..."></textarea>
+            
+            <div class="button-group">
+                <button id="rearrangeBtn">গ্রুপ করুন</button>
+                <button id="copyAllBtn" class="copy-all-btn">সব কপি করুন</button>
+                <button id="clearBtn" class="clear-btn">মুছে ফেলুন</button>
+            </div>
+        </section>
+        
+        <section id="resultsContainer">
+            <h2>ফলাফল:</h2>
+            <div id="resultsTableContainer">
+                <div class="empty-state">ফলাফল এখানে দেখানো হবে।</div>
+            </div>
+        </section>
+    </main>
+
+    <div id="copyNotification" role="alert" aria-live="polite"></div>
+
+    <script>
+        'use strict';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rearrangeBtn = document.getElementById('rearrangeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyAllBtn = document.getElementById('copyAllBtn'); // New button
+            const inputText = document.getElementById('inputText');
+            const resultsTableContainer = document.getElementById('resultsTableContainer');
+            const notification = document.getElementById('copyNotification');
+
+            // Load saved text from localStorage
+            const savedText = localStorage.getItem('inputTextContent');
+            if (savedText) {
+                inputText.value = savedText;
+            }
+
+            // Save text to localStorage on input
+            inputText.addEventListener('input', () => {
+                localStorage.setItem('inputTextContent', inputText.value);
+            });
+
+            const showNotification = (message, type = 'success') => {
+                notification.textContent = message;
+                notification.className = `show ${type}`; // Added 'show' class
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2500);
+            };
+
+            const buildTable = (header, dataLines) => {
+                let tableHTML = '<table class="result-table"><caption>গ্রুপ করা টেক্সটের ফলাফল</caption>';
+                
+                tableHTML += '<thead><tr><th>নং</th>';
+                header.split('\t').forEach(part => tableHTML += `<th scope="col">${part}</th>`);
+                tableHTML += '<th scope="col">কপি</th>'; // New header for copy button
+                tableHTML += '</tr></thead>';
+
+                tableHTML += '<tbody>';
+                dataLines.forEach((line, index) => {
+                    const cells = line.split('\t');
+                    tableHTML += `<tr><td>${index + 1}</td>`;
+                    cells.forEach(cell => tableHTML += `<td>${cell}</td>`);
+                    // Add copy button for each row
+                    tableHTML += `<td><button class="copy-row-btn" data-holding="${cells[0]}" data-khatian="${cells[1]}" title="এই সারি কপি করুন"> 📋</button></td>`;
+                    tableHTML += '</tr>';
+                });
+                tableHTML += '</tbody></table>';
+
+                return tableHTML;
+            };
+
+            const rearrangeText = () => {
+                const text = inputText.value;
+                if (!text.trim()) {
+                    resultsTableContainer.innerHTML = '<div class="empty-state">অনুগ্রহ করে প্রথমে টেক্সট ইনপুট করুন।</div>';
+                    showNotification('ইনপুট বক্স খালি!', 'error');
+                    return;
+                }
+
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                if (lines.length < 2) {
+                    resultsTableContainer.innerHTML = '<div class="empty-state">হেডার সহ অন্তত একটি ডেটা লাইন প্রয়োজন।</div>';
+                    return;
+                }
+
+                const header = lines[0];
+                const dataLines = lines.slice(1);
+                const groups = {};
+
+                dataLines.forEach(line => {
+                    const parts = line.split('\t');
+                    const comment = parts.length > 2 ? parts.slice(2).join('\t').trim() : 'কোনো মন্তব্য নেই';
+                    if (!groups[comment]) {
+                        groups[comment] = [];
+                    }
+                    groups[comment].push(line);
+                });
+
+                const outputLines = Object.values(groups).flat();
+                
+                const tableHTML = buildTable(header, outputLines);
+                resultsTableContainer.innerHTML = tableHTML;
+                
+                const table = resultsTableContainer.querySelector('.result-table');
+                if (table) {
+                    table.addEventListener('copy', handleSmartCopy);
+                    // Add event listeners for per-row copy buttons
+                    table.querySelectorAll('.copy-row-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const holding = event.target.dataset.holding;
+                            const khatian = event.target.dataset.khatian;
+                            copyToClipboard(`${holding}\t${khatian}`);
+                            showNotification('✅ হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+
+                            // Highlight the row
+                            const row = event.target.closest('tr');
+                            if (row) {
+                                row.classList.add('copied');
+                            }
+                        });
+                    });
+                }
+            };
+            
+            const copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text).then(() => {
+                    // Success handled by the calling function
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showNotification('কপি করতে ব্যর্থ!', 'error');
+                });
+            };
+
+            const handleSmartCopy = (event) => {
+                event.preventDefault();
+
+                const selection = window.getSelection();
+                if (selection.rangeCount === 0) return;
+
+                const range = selection.getRangeAt(0);
+                const selectedFragment = range.cloneContents();
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(selectedFragment);
+
+                let copyText = '';
+                const rows = tempDiv.querySelectorAll('tr');
+
+                if (rows.length > 0) {
+                    const selectedData = [];
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td'); // Only consider td for data
+                        // Ensure it's a data row with enough cells (SN, Holding, Khatian, Comment, CopyBtn)
+                        if (cells.length >= 4) { // Changed from 3 to 4 because of new copy button column
+                             selectedData.push(`${cells[1].textContent}\t${cells[2].textContent}`);
+                        }
+                    });
+                    copyText = selectedData.join('\n');
+                } else {
+                    // Handle single-line or partial selection within a row
+                    const parentRow = range.startContainer.parentElement.closest('tr');
+                    if (parentRow) {
+                        const cells = parentRow.querySelectorAll('td');
+                        if (cells.length >= 4) { // Changed from 3 to 4
+                            copyText = `${cells[1].textContent}\t${cells[2].textContent}`;
+                        }
+                    }
+                }
+            
+                if (copyText) {
+                    copyToClipboard(copyText.trim());
+                    showNotification('✅ শুধুমাত্র হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+
+                    // Highlight copied rows
+                    const tableRows = tempDiv.querySelectorAll('tr');
+                    if (tableRows.length > 0) {
+                        const selectedRowIndexes = Array.from(tableRows).map(row => {
+                            // This is a bit fragile, depends on the structure.
+                            // A better way would be to have row IDs/data-attributes if possible
+                            // For now, let's find the original rows to highlight
+                            const firstCellContent = row.querySelector('td')?.textContent;
+                            if (!firstCellContent) return -1;
+                            
+                            const allTableRows = resultsTableContainer.querySelectorAll('.result-table tbody tr');
+                            for(let i=0; i<allTableRows.length; i++) {
+                                if(allTableRows[i].textContent.includes(firstCellContent)) {
+                                    return i;
+                                }
+                            }
+                            return -1;
+                        }).filter(index => index !== -1);
+
+                        const originalTableRows = resultsTableContainer.querySelectorAll('.result-table tbody tr');
+                        selectedRowIndexes.forEach(rowIndex => {
+                             if(originalTableRows[rowIndex]) {
+                                originalTableRows[rowIndex].classList.add('copied');
+                             }
+                        });
+                    }
+                } else {
+                     showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
+                }
+            };
+
+            const copyAllHoldingKhatian = () => {
+                const table = resultsTableContainer.querySelector('.result-table');
+                if (!table) {
+                    showNotification('কপি করার জন্য কোনো টেবিল নেই!', 'error');
+                    return;
+                }
+
+                const rows = table.querySelectorAll('tbody tr');
+                if (rows.length === 0) {
+                    showNotification('কপি করার জন্য কোনো ডেটা নেই!', 'error');
+                    return;
+                }
+
+                let allCopyText = [];
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 4) { // SN, Holding, Khatian, Comment, CopyBtn
+                        allCopyText.push(`${cells[1].textContent}\t${cells[2].textContent}`);
+                    }
+                });
+
+                if (allCopyText.length > 0) {
+                    copyToClipboard(allCopyText.join('\n'));
+                    showNotification('✅ সব হোল্ডিং ও খতিয়ান কপি হয়েছে!', 'success');
+
+                    // Highlight all rows
+                    rows.forEach(row => row.classList.add('copied'));
+                } else {
+                    showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
+                }
+            };
+
+            const clearAll = () => {
+                inputText.value = '';
+                localStorage.removeItem('inputTextContent'); // Clear saved data
+                resultsTableContainer.innerHTML = '<div class="empty-state">ফলাফল এখানে দেখানো হবে।</div>';
+                showNotification('সবকিছু মুছে ফেলা হয়েছে।', 'success');
+            };
+
+            rearrangeBtn.addEventListener('click', rearrangeText);
+            copyAllBtn.addEventListener('click', copyAllHoldingKhatian); // New event listener
+            clearBtn.addEventListener('click', clearAll);
+
+            // If there's saved text, process it on load
+            if (savedText && savedText.trim()) {
+                rearrangeText();
+            }
+        });
+    </script>
+
+</body>
+</html>
