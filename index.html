@@ -312,6 +312,36 @@
             let clickCount = 0;
             let konamiCode = [];
             const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+            
+            // Load copied rows from sessionStorage
+            let copiedRows = new Set(JSON.parse(sessionStorage.getItem('copiedRows') || '[]'));
+            
+            const saveCopiedRows = () => {
+                sessionStorage.setItem('copiedRows', JSON.stringify([...copiedRows]));
+            };
+            
+            const markRowAsCopied = (holding, khatian) => {
+                const rowKey = `${holding}-${khatian}`;
+                copiedRows.add(rowKey);
+                saveCopiedRows();
+            };
+            
+            const restoreCopiedHighlights = () => {
+                const table = resultsTableContainer.querySelector('.result-table');
+                if (!table) return;
+                
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 3) {
+                        const holding = cells[1].textContent;
+                        const khatian = cells[2].textContent;
+                        const rowKey = `${holding}-${khatian}`;
+                        if (copiedRows.has(rowKey)) {
+                            row.classList.add('copied');
+                        }
+                    }
+                });
+            };
 
             // Easter Egg 1: Triple-click header
             h1.addEventListener('click', () => {
@@ -461,9 +491,11 @@
                             const row = event.target.closest('tr');
                             if (row) {
                                 row.classList.add('copied');
+                                markRowAsCopied(holding, khatian);
                             }
                         });
                     });
+                    restoreCopiedHighlights();
                 }
             };
             
@@ -518,6 +550,10 @@
                     tableRows.forEach(row => {
                         if (selection.containsNode(row, true)) {
                             row.classList.add('copied');
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length >= 3) {
+                                markRowAsCopied(cells[1].textContent, cells[2].textContent);
+                            }
                         }
                     });
                 } else {
@@ -552,6 +588,10 @@
 
                     rows.forEach(row => {
                         row.classList.add('copied');
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 3) {
+                            markRowAsCopied(cells[1].textContent, cells[2].textContent);
+                        }
                     });
                 } else {
                     showNotification('কপি করার জন্য কোনো ডেটা পাওয়া যায়নি।', 'error');
@@ -561,6 +601,8 @@
             const clearAll = () => {
                 inputText.value = '';
                 sessionStorage.removeItem('inputTextContent');
+                sessionStorage.removeItem('copiedRows');
+                copiedRows.clear();
                 resultsTableContainer.innerHTML = '<div class="empty-state">ফলাফল এখানে দেখানো হবে।</div>';
                 showNotification('সবকিছু মুছে ফেলা হয়েছে।', 'success');
             };
